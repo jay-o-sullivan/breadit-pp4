@@ -32,7 +32,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['8000-jayosullivan-breaditpp4-5phf5gdb7kc.ws-eu111.gitpod.io', 'https://git.heroku.com/breadit.git']
+ALLOWED_HOSTS = ['8000-jayosullivan-breaditpp4-5phf5gdb7kc.ws-eu111.gitpod.io', 'breadit-9c8dede03c46.herokuapp.com']
 
 
 # Application definition
