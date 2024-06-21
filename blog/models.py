@@ -37,6 +37,7 @@ class Post(models.Model):
         User, related_name='blogpost_like', blank=True)
     upvotes = models.ManyToManyField(User, related_name='post_upvotes', blank=True)
     downvotes = models.ManyToManyField(User, related_name='post_downvotes', blank=True)
+    image = CloudinaryField('image', blank=True)
     class Meta:
         ordering = ["-created_on"]
 
@@ -58,7 +59,7 @@ class Comment(models.Model):
     name = models.CharField(max_length=80)
     body = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
-    approved = models.BooleanField(default=False)
+    image = CloudinaryField('image', blank=True)
 
     class Meta:
         ordering = ["created_on"]
