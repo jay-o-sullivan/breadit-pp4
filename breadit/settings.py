@@ -32,12 +32,12 @@ TEMPLATES_DIR =  os.path.join(BASE_DIR, 'templates')
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
-ALLOWED_HOSTS = ['8000-jayosullivan-breaditpp4-5phf5gdb7kc.ws-eu114.gitpod.io', 'breadit-9c8dede03c46.herokuapp.com']
+ALLOWED_HOSTS = ['8000-jayosullivan-breaditpp4-rht4wfjt09p.ws.codeinstitute-ide.net', 'breadit-9c8dede03c46.herokuapp.com']
 
 
 # Application definition
@@ -116,7 +116,15 @@ WSGI_APPLICATION = 'breadit.wsgi.application'
 #        'NAME': BASE_DIR / 'db.sqlite3',
 #    }
 #}
-
+try:
+    DATABASE_URL = os.environ.get('DATABASE_URL')
+    if DATABASE_URL:
+        DATABASE_URL = DATABASE_URL.decode('utf-8') if isinstance(DATABASE_URL, bytes) else DATABASE_URL
+        DATABASES = {'default': dj_database_url.parse(DATABASE_URL)}
+    else:
+        raise ValueError('DATABASE_URL not found in environment variables')
+except Exception as e:
+    print(f"Error configuring database: {e}")
 DATABASES = {
      'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
  }
