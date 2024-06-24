@@ -8,7 +8,10 @@
         <div class="row g-0">
             <div class="col-md-6 masthead-text">
                 <h1 class="post-title">{{ post.title }}</h1>
-                <p class="post-subtitle">{{ post.author.username }} | {{ post.created_on }}</p>
+                <p class="post-subtitle">
+                    <img src="{{ post.author.profile.profile_picture.url }}" class="rounded-circle" width="50" height="50" alt="{{ post.author.username }}">
+                    {{ post.author.username }} | {{ post.created_on }}
+                </p>
             </div>
             <div class="d-none d-md-block col-md-6 masthead-image">
                 {% if "placeholder" in post.featured_image.url %}
@@ -43,7 +46,7 @@
                             {% else %}
                             <span class="text-secondary"><i class="far fa-heart"></i></span>
                             {% endif %}
-                            <span class="text-secondary">{{ post.number_of_likes }}</span>
+                            <span class="text-secondary">{{ post.likes.count }}</span>
                         </strong>
                     </div>
                     <div class="col-1">
@@ -67,7 +70,8 @@
                 {% for comment in comments %}
                 <div class="comments" style="padding: 10px;">
                     <p class="font-weight-bold">
-                        {{ comment.name }}
+                        <img src="{{ comment.user.profile.profile_picture.url }}" class="rounded-circle" width="30" height="30" alt="{{ comment.user.username }}">
+                        {{ comment.user.username }}
                         <span class="text-muted font-weight-normal">
                             {{ comment.created_on }}
                         </span> wrote:

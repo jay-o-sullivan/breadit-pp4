@@ -53,9 +53,26 @@
                     </li>
                     {% endif %}
                 </ul>
+                {% if user.is_authenticated %}
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="{% if user.profile.profile_picture %}{{ user.profile.profile_picture.url }}{% else %}{% static 'img/default_profile_picture.jpg' %}{% endif %}"
+                                class="rounded-circle" width="30" height="30" alt="Profile Picture">
+                            {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                            <!-- Add more dropdown options as needed -->
+                        </ul>
+                    </li>
+                </ul>
+                {% else %}
                 <span class="navbar-text text-muted">
-                    adventures of a software developer
+                    Welcome to Breadit Blog
                 </span>
+                {% endif %}
             </div>
         </div>
     </nav>

@@ -1,40 +1,30 @@
 {% extends 'base.html' %}
-
-{% block title %}Profile{% endblock %}
-
+{% load static %}
 {% block content %}
-<div class="container mt-4">
+<div class="container">
+    <h2>Profile</h2>
     <div class="row">
-        <div class="col-md-6">
-            <h1>Profile</h1>
-
-            <!-- Profile Editing Form -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h2>Edit Profile</h2>
-                </div>
-                <div class="card-body">
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </form>
-                </div>
-            </div>
+        <div class="col-md-4">
+            {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" class="img-thumbnail" alt="Profile Picture">
+            {% else %}
+                <img src="{% static 'img/default_profile_picture.jpg' %}" class="img-thumbnail" alt="Default Profile Picture">
+            {% endif %}
         </div>
-
-        <div class="col-md-6">
-            <!-- Create Post Section -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h2>Create Post</h2>
-                </div>
-                <div class="card-body">
-                    <p>Create a new post to share with others.</p>
-                    <a href="{% url 'create_post' %}" class="btn btn-primary">Create Post</a>
-                </div>
-            </div>
+        <div class="col-md-8">
+            <h4>{{ request.user.username }}</h4>
+            <p>{{ profile.bio }}</p>
+            <!-- Add more fields as needed -->
         </div>
     </div>
+
+    <hr>
+    {% load crispy_forms_tags %}
+    <h3>Edit Profile</h3>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
 </div>
-{% endblock %}
+{% endblock content %}
