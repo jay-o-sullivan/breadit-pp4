@@ -1,34 +1,70 @@
 {% extends "base.html" %}
-
 {% load i18n %}
 {% load account socialaccount %}
+{% load crispy_forms_tags %}
 
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 
 {% block content %}
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 mt-3 offset-md-2">
-            <h3>{% trans "Sign In" %}</h3>
-
-            <p>{% blocktrans %}Welcome back to the Breadit blog. To leave a comment or like a post, please log in. If
-                you
-                have not created an account yet, then <a class="link" href="{{ signup_url }}">sign up</a>
-                first.{% endblocktrans %}</p>
-        </div>
+<div class="masthead">
+    <div class="masthead-text">
+        <h1 class="masthead-heading mb-0">{% trans "Welcome Back" %}</h1>
+        <p class="post-subtitle">Sign in to your Breadit account</p>
     </div>
+</div>
+
+<div class="container my-5">
     <div class="row">
-        <div class="col-md-8 mt-3 offset-md-2">
-            <form class="login" method="POST" action="{% url 'account_login' %}">
-                {% csrf_token %}
-                {{ form.as_p }}
-                {% if redirect_field_value %}
-                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-                {% endif %}
-                <button class="btn btn-signup right" type="submit">{% trans "Sign In" %}</button>
-            </form>
+        <div class="col-lg-6 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body p-5">
+                    <h3 class="card-title text-center mb-4">{% trans "Sign In" %}</h3>
+
+                    <p class="text-center text-muted mb-4">
+                        {% blocktrans %}Don't have an account yet? <a href="{{ signup_url }}" class="link">Create one now</a>{% endblocktrans %}
+                    </p>
+
+                    <form class="login" method="POST" action="{% url 'account_login' %}" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger mb-4">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <strong>Sign in failed!</strong>
+                            {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        {{ form | crispy }}
+
+                        {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                        {% endif %}
+
+                        <button class="btn btn-primary w-100 btn-lg mt-4" type="submit">
+                            <i class="fas fa-sign-in-alt"></i> {% trans "Sign In" %}
+                        </button>
+
+                        <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                            <label class="form-check-label" for="remember">
+                                {% trans "Remember me" %}
+                            </label>
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <p class="text-center text-muted small">
+                        <a href="#" class="link">Forgot your password?</a>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

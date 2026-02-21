@@ -1,29 +1,47 @@
 {% extends "base.html" %}
-
 {% load i18n %}
 
 {% block head_title %}{% trans "Sign Out" %}{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 mt-3 offset-md-2">
-            <h3>{% trans "Sign Out" %}</h3>
 
-            <p>{% trans 'Are you sure you want to sign out?' %}</p>
-        </div>
+<div class="masthead">
+    <div class="masthead-text">
+        <h1 class="masthead-heading mb-0">{% trans "Sign Out" %}</h1>
+        <p class="post-subtitle">We'll miss you!</p>
     </div>
-    <div class="row">
-        <div class="col-md-8 mt-3 offset-md-2">
+</div>
 
-            <form method="post" action="{% url 'account_logout' %}">
-                {% csrf_token %}
-                {% if redirect_field_value %}
-                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-                {% endif %}
-                <button class="btn btn-signup right" type="submit">{% trans 'Sign Out' %}</button>
-            </form>
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body p-5 text-center">
+                    <i class="fas fa-sign-out-alt fa-3x text-warning mb-4"></i>
+                    
+                    <h3 class="card-title mb-4">{% trans "Sign Out Confirmation" %}</h3>
+
+                    <p class="card-text text-muted mb-4">
+                        {% trans 'Are you sure you want to sign out? You can always sign back in anytime.' %}
+                    </p>
+
+                    <form method="post" action="{% url 'account_logout' %}" class="d-grid gap-2">
+                        {% csrf_token %}
+                        {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                        {% endif %}
+                        
+                        <button class="btn btn-danger btn-lg" type="submit">
+                            <i class="fas fa-sign-out-alt"></i> {% trans 'Yes, Sign Out' %}
+                        </button>
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-arrow-left"></i> {% trans 'Cancel' %}
+                        </a>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

@@ -58,7 +58,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="{% if user.profile.profile_picture %}{{ user.profile.profile_picture.url }}{% else %}{% static 'img/default_profile_picture.jpg' %}{% endif %}"
+                            <img src="{% if user.profile and user.profile.profile_picture %}{{ user.profile.profile_picture.url }}{% else %}https://via.placeholder.com/30{% endif %}"
                                 class="rounded-circle" width="30" height="30" alt="Profile Picture">
                             {{ user.username }}
                         </a>

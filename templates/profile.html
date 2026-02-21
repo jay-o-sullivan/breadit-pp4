@@ -1,30 +1,165 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
+
 {% block content %}
-<div class="container">
-    <h2>Profile</h2>
+
+<div class="masthead">
+    <div class="masthead-text">
+        <h1 class="masthead-heading mb-0">User Profile</h1>
+        <p class="post-subtitle">Manage your profile and preferences</p>
+    </div>
+</div>
+
+<div class="container my-5">
     <div class="row">
-        <div class="col-md-4">
-            {% if profile.profile_picture %}
-                <img src="{{ profile.profile_picture.url }}" class="img-thumbnail" alt="Profile Picture">
-            {% else %}
-                <img src="{% static 'img/default_profile_picture.jpg' %}" class="img-thumbnail" alt="Default Profile Picture">
-            {% endif %}
+        <!-- Profile Card -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <!-- Profile Picture -->
+                    <div class="mb-4">
+                        {% if profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}" class="rounded-circle border border-4" style="width: 150px; height: 150px; object-fit: cover;" alt="Profile Picture">
+                        {% else %}
+                            <img src="https://via.placeholder.com/150?text={{ request.user.username|first }}" class="rounded-circle border border-4" style="width: 150px; height: 150px; object-fit: cover;" alt="Default Profile Picture">
+                        {% endif %}
+                    </div>
+
+                    <!-- Username -->
+                    <h3 class="card-title mb-2">{{ request.user.username }}</h3>
+                    
+                    <!-- Email -->
+                    <p class="text-muted mb-1">
+                        <i class="fas fa-envelope"></i> {{ request.user.email }}
+                    </p>
+
+                    <!-- Join Date -->
+                    <p class="text-muted mb-3">
+                        <i class="fas fa-calendar"></i> Joined {{ request.user.date_joined|date:"M d, Y" }}
+                    </p>
+
+                    <!-- Bio -->
+                    {% if profile.bio %}
+                    <div class="card-text border-top pt-3 mt-3">
+                        <p class="mb-0">{{ profile.bio }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-        <div class="col-md-8">
-            <h4>{{ request.user.username }}</h4>
-            <p>{{ profile.bio }}</p>
-            <!-- Add more fields as needed -->
+
+        <!-- Edit Profile Form -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger mb-4">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <strong>Error!</strong>
+                            {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Form Fields -->
+                        <div class="mb-4">
+                            <label for="{{ form.bio.id_for_label }}" class="form-label">
+                                <i class="fas fa-align-left"></i> Bio
+                            </label>
+                            {{ form.bio }}
+                            {% if form.bio.errors %}
+                            <div class="invalid-feedback d-block">{{ form.bio.errors }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">Tell us about yourself</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.profile_picture.id_for_label }}" class="form-label">
+                                <i class="fas fa-image"></i> Profile Picture
+                            </label>
+                            <div class="input-group">
+                                {{ form.profile_picture }}
+                            </div>
+                            {% if form.profile_picture.errors %}
+                            <div class="invalid-feedback d-block">{{ form.profile_picture.errors }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">Upload a new profile picture</small>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2 d-sm-flex">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-arrow-left"></i> Back to Home
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- User Stats (Optional) -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Posts Created</h5>
+                            <p class="display-4 text-primary mb-0">-</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Comments Made</h5>
+                            <p class="display-4 text-primary mb-0">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <hr>
-    {% load crispy_forms_tags %}
-    <h3>Edit Profile</h3>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit" class="btn btn-primary">Update</button>
-    </form>
 </div>
+
+<style>
+    .form-control, textarea {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px 15px;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus, textarea:focus {
+        border-color: #e74c3c;
+        box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .btn-outline-secondary {
+        color: #666;
+        border-color: #ddd;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #f5f5f5;
+        border-color: #999;
+    }
+</style>
+
 {% endblock content %}

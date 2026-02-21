@@ -1,54 +1,117 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="masthead">
+    <div class="masthead-text">
+        <h1 class="masthead-heading mb-0">Welcome to Breadit</h1>
+        <p class="post-subtitle">Discover amazing stories and share your thoughts</p>
+    </div>
+</div>
+
+<div class="container my-5">
     <div class="row">
-        <div class="col-12 mt-3">
-            {% for post in post_list %}
-            <div class="post-card mb-4 p-3 border rounded d-flex">
-                <div class="voting-section mr-3 text-center">
-                    <form action="{% url 'post_upvote' post.slug %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-link"><i class="fas fa-arrow-up"></i></button>
-                    </form>
-                    <p>{{ post.number_of_upvotes }}</p>
-                    <form action="{% url 'post_downvote' post.slug %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-link"><i class="fas fa-arrow-down"></i></button>
-                    </form>
-                </div>
-                <div class="post-details flex-grow-1">
-                    <div class="d-flex align-items-center mb-2">
-                        <img src="{{ post.author.profile.profile_picture.url }}" class="rounded-circle" width="40" height="40" alt="Profile Picture">
-                        <p class="mb-0 ml-2">Posted by <a href="#">{{ post.author.username }}</a> in <a href="#">{{ post.category.name }}</a></p>
+        <div class="col-12">
+            {% if post_list %}
+                {% for post in post_list %}
+                <div class="post-card mb-4 d-flex">
+                    <!-- Voting Section -->
+                    <div class="voting-section">
+                        <form action="{% url 'post_upvote' post.slug %}" method="POST" class="m-0">
+                            {% csrf_token %}
+                            <button type="submit" class="voting-section button" title="Upvote"><i class="fas fa-arrow-up"></i></button>
+                        </form>
+                        <p class="vote-count">{{ post.number_of_upvotes }}</p>
+                        <form action="{% url 'post_downvote' post.slug %}" method="POST" class="m-0">
+                            {% csrf_token %}
+                            <button type="submit" class="voting-section button" title="Downvote"><i class="fas fa-arrow-down"></i></button>
+                        </form>
                     </div>
-                    <h4 class="post-title"><a href="{% url 'post_detail' post.slug %}">{{ post.title }}</a></h4>
-                    <p class="post-meta">{{ post.created_on|date:"F j, Y, g:i a" }}</p>
-                    <p class="post-excerpt">{{ post.excerpt }}</p>
-                    {% if post.featured_image %}
-                    <img src="{{ post.featured_image.url }}" class="img-fluid rounded mb-3" alt="Featured Image">
-                    {% endif %}
-                    <div class="post-actions mt-2">
-                        <a href="{% url 'post_detail' post.slug %}" class="btn btn-primary btn-sm">Read more</a>
-                        <span class="text-secondary ml-3"><i class="far fa-heart"></i> {{ post.number_of_likes }}</span>
-                        <span class="text-secondary ml-3"><i class="far fa-comments"></i> {{ post.comments.count }}</span>
+
+                    <!-- Post Details -->
+                    <div class="post-details">
+                        <!-- Author Info -->
+                        <div class="author-info">
+                            {% if post.author.profile and post.author.profile.profile_picture %}
+                                <img src="{{ post.author.profile.profile_picture.url }}" alt="Profile Picture">
+                            {% else %}
+                                <img src="https://via.placeholder.com/40?text={{ post.author.username|first }}" alt="Profile Picture">
+                            {% endif %}
+                            <div>
+                                <p><a href="#">{{ post.author.username }}</a></p>
+                                <p>in <a href="#">{{ post.category.name }}</a> • {{ post.created_on|date:"M d, Y" }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Post Title -->
+                        <h3 class="post-title"><a href="{% url 'post_detail' post.slug %}">{{ post.title }}</a></h3>
+
+                        <!-- Post Excerpt & Image -->
+                        <div class="d-flex gap-3">
+                            <div class="flex-grow-1">
+                                <p class="post-excerpt">{{ post.excerpt }}</p>
+                                <!-- Post Actions -->
+                                <div class="post-actions">
+                                    <a href="{% url 'post_detail' post.slug %}">Read more</a>
+                                    <span><i class="far fa-heart"></i> {{ post.number_of_likes }}</span>
+                                    <span><i class="far fa-comments"></i> {{ post.comments.count }}</span>
+                                </div>
+                            </div>
+                            {% if post.featured_image %}
+                            <div class="flex-shrink-0" style="min-width: 150px;">
+                                <img src="{{ post.featured_image.url }}" class="rounded" alt="Featured Image" style="width: 150px; height: 150px; object-fit: cover;">
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-            </div>
-            {% endfor %}
+                {% endfor %}
+
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <nav aria-label="Page navigation" class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a href="?page={{ page_obj.previous_page_number }}" class="page-link">&laquo; PREV</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo; PREV</span>
+                            </li>
+                        {% endif %}
+
+                        <!-- Page numbers -->
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}<span class="visually-hidden">(current)</span></span>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a href="?page={{ page_obj.next_page_number }}" class="page-link">NEXT &raquo;</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">NEXT &raquo;</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-info text-center py-5">
+                    <h4>No posts yet</h4>
+                    <p>Be the first to create a post! <a href="{% url 'create_post' %}" class="link">Create one now</a></p>
+                </div>
+            {% endif %}
         </div>
     </div>
-    {% if is_paginated %}
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-            {% if page_obj.has_previous %}
-            <li class="page-item"><a href="?page={{ page_obj.previous_page_number }}" class="page-link">&laquo; PREV</a></li>
-            {% endif %}
-            {% if page_obj.has_next %}
-            <li class="page-item"><a href="?page={{ page_obj.next_page_number }}" class="page-link">NEXT &raquo;</a></li>
-            {% endif %}
-        </ul>
-    </nav>
-    {% endif %}
 </div>
 {% endblock %}
